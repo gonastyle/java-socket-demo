@@ -3,6 +3,8 @@ package com.mei.tcp;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Description:
@@ -32,11 +34,7 @@ public class TcpClient {
             socket = new Socket(ip, port);
             outputStream = socket.getOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-            System.out.println("请输入数据：");
-            Scanner sc = new Scanner(System.in);
-            String data = sc.nextLine();
-            System.out.println(data);
-            writer.write(data);
+            writer.write("ABC");
             writer.flush();
             socket.shutdownOutput();
 
@@ -64,10 +62,24 @@ public class TcpClient {
 
     }
 
-    public static void main(String[] args) {
+    public void getConsoleInput() {
 
-        TcpClient cient = new TcpClient();
-        cient.start();
+        System.out.println("请输入数据：");
+        Scanner sc = new Scanner(System.in);
+        String data = sc.nextLine();
+        System.out.println(data);
+    }
+
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        for (int i = 0; i < 3; i++) {
+            pool.submit(() -> {
+                TcpClient cient = new TcpClient();
+                cient.start();
+            });
+
+        }
+
 
     }
 }
