@@ -63,7 +63,6 @@ public class TcpClient {
     }
 
     public void getConsoleInput() {
-
         System.out.println("请输入数据：");
         Scanner sc = new Scanner(System.in);
         String data = sc.nextLine();
