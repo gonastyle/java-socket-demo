@@ -37,12 +37,12 @@ public class TcpServer {
         //监听端口
         ServerSocket server = new ServerSocket(port);
 
-        Socket socket = null;
         while (true) {
             //等待连接
-            socket = server.accept();
-            System.out.println(String.format("%s：客户端建立连接", socket.getInetAddress().getHostAddress()));
-            Socket finalSocket = socket;
+            final Socket socket = server.accept();
+            String clientIP = socket.getInetAddress().getHostAddress();
+            System.out.println(String.format("%s：客户端建立连接", clientIP));
+
             Runnable task = () -> {
                 InputStream inputStream = null;
                 InputStreamReader inputStreamReader = null;
@@ -50,31 +50,32 @@ public class TcpServer {
                 OutputStream outputStream = null;
                 OutputStreamWriter writer = null;
                 try {
-                    inputStream = finalSocket.getInputStream();
+                    inputStream = socket.getInputStream();
                     inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
                     bufferedReader = new BufferedReader(inputStreamReader);
                     String info = null;//临时
                     while ((info = bufferedReader.readLine()) != null) {
-                        System.out.println("服务器端接收：" + "{'from_client':'" + finalSocket.getInetAddress().getHostAddress() + "','data':'" + info + "'}");
+                        System.out.println("服务器端接收：" + "{'from_client':'" + clientIP + "','data':'" + info + "'}");
                     }
 
-                    outputStream = finalSocket.getOutputStream();
+                    outputStream = socket.getOutputStream();
                     writer = new OutputStreamWriter(outputStream, "UTF-8");
-                    writer.write("{'to_client':'" + finalSocket.getInetAddress().getHostAddress() + "','data':'我是服务器数据'}");
+                    writer.write("{'to_client':'" + clientIP + "','data':'我是服务器数据'}");
                     writer.flush();//清空缓冲区数据
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     try {
-                        finalSocket.close();
+                        socket.close();
                         inputStream.close();
                         outputStream.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-
+                System.out.println(String.format("%s：客户端建立连接关闭", clientIP));
             };
+            //提交当前连接任务
             executorService.submit(task);
         }
 

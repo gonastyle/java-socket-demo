@@ -55,10 +55,11 @@ public class TcpClient {
                 socket.close();
                 outputStream.close();
                 inputStream.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        System.out.println("连接结束");
 
     }
 
@@ -71,7 +72,7 @@ public class TcpClient {
 
     public static void main(String[] args) {
         ExecutorService pool = Executors.newCachedThreadPool();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             pool.submit(() -> {
                 TcpClient cient = new TcpClient();
                 cient.start();
