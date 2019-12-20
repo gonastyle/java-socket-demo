@@ -34,7 +34,8 @@ public class TcpClient {
             socket = new Socket(ip, port);
             outputStream = socket.getOutputStream();
             OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-            writer.write("ABC");
+
+            writer.write(getConsoleInput());
             writer.flush();
             socket.shutdownOutput();
 
@@ -63,11 +64,12 @@ public class TcpClient {
 
     }
 
-    public void getConsoleInput() {
+    public String getConsoleInput() {
         System.out.println("请输入数据：");
         Scanner sc = new Scanner(System.in);
         String data = sc.nextLine();
         System.out.println(data);
+        return data;
     }
 
     public static void main(String[] args) {
